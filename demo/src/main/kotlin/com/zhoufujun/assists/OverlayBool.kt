@@ -1,0 +1,159 @@
+package com.zhoufujun.assists
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import com.blankj.utilcode.util.ScreenUtils
+import com.ven.assists.service.AssistsService
+import com.ven.assists.service.AssistsServiceListener
+import com.ven.assists.stepper.StepManager
+import com.ven.assists.utils.CoroutineWrapper
+import com.ven.assists.window.AssistsWindowManager
+import com.ven.assists.window.AssistsWindowWrapper
+import com.zhoufujun.assists.databinding.OverlayBoolBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+
+@SuppressLint("StaticFieldLeak")
+object OverlayBool : AssistsServiceListener {
+
+    var runAutoScrollListJob: Job? = null
+    private var logCollectJob: Job? = null
+
+    private val onScrollTouchListener = object : View.OnTouchListener {
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    runAutoScrollListJob?.cancel()
+                    runAutoScrollListJob = null
+                }
+
+                MotionEvent.ACTION_UP -> {
+//                    runAutoScrollList()
+                }
+            }
+            return false
+        }
+    }
+    private var viewBinding: OverlayBoolBinding? = null
+        @SuppressLint("ClickableViewAccessibility")
+        get() {
+            if (field == null) {
+                field = OverlayBoolBinding.inflate(LayoutInflater.from(AssistsService.Companion.instance)).apply {
+                    scrollView.setOnTouchListener(onScrollTouchListener)
+                    LogWrapper.logAppend("启动辅助");
+                    btnGen.setOnClickListener {
+                        StepManager.execute(W::class.java, 2, begin = true)
+                    }
+                    btnSubmit.setOnClickListener {}
+                }
+            }
+            return field
+        }
+
+
+    var onClose: ((parent: View) -> Unit)? = null
+
+    var showed = false
+        private set
+        get() {
+            field = assistWindowWrapper?.let {
+                return AssistsWindowManager.isVisible(it.getView())
+            } ?: return false
+            return field
+        }
+
+    var assistWindowWrapper: AssistsWindowWrapper? = null
+        private set
+        get() {
+            viewBinding?.let {
+                if (field == null) {
+                    field = AssistsWindowWrapper(
+                        it.root,
+                        wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
+                            width = (ScreenUtils.getScreenWidth() * 0.8).toInt()
+                            height = (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                        },
+                        onClose = {
+                            hide()
+                            onClose?.invoke(it)
+                        }).apply {
+                        minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
+                        minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
+                        initialCenter = true
+                        viewBinding.tvTitle.text = "日志"
+                    }
+                }
+            }
+            return field
+        }
+
+    fun show() {
+        if (!AssistsService.Companion.listeners.contains(this)) {
+            AssistsService.Companion.listeners.add(this)
+        }
+        if (!AssistsWindowManager.contains(assistWindowWrapper?.getView())) {
+            AssistsWindowManager.add(assistWindowWrapper)
+            initLogCollect()
+            runAutoScrollList(delay = 0)
+        }
+    }
+
+    fun hide() {
+        AssistsWindowManager.removeView(assistWindowWrapper?.getView())
+        logCollectJob?.cancel()
+        logCollectJob = null
+        runAutoScrollListJob?.cancel()
+        runAutoScrollListJob = null
+    }
+
+    override fun onUnbind() {
+        viewBinding = null
+        assistWindowWrapper = null
+        logCollectJob?.cancel()
+        logCollectJob = null
+        runAutoScrollListJob?.cancel()
+        runAutoScrollListJob = null
+    }
+
+
+    private fun runAutoScrollList(delay: Long = 5000) {
+        runAutoScrollListJob?.cancel()
+        runAutoScrollListJob = CoroutineWrapper.launch {
+            delay(delay)
+            while (true) {
+                withContext(Dispatchers.Main) {
+                    viewBinding?.scrollView?.smoothScrollBy(
+                        0,
+                        viewBinding?.scrollView?.getChildAt(0)?.height ?: 0
+                    )
+                }
+                delay(250)
+            }
+        }
+    }
+
+    private fun initLogCollect() {
+        logCollectJob?.cancel()
+        logCollectJob = CoroutineWrapper.launch {
+            withContext(Dispatchers.Main) {
+                viewBinding?.apply {
+                    tvLog.text = LogWrapper.logCache
+                    tvLength.text = "${tvLog.length()}"
+                }
+            }
+            LogWrapper.logAppendValue.collect {
+                withContext(Dispatchers.Main) {
+                    viewBinding?.apply {
+                        tvLog.text = LogWrapper.logCache
+                        tvLength.text = "${tvLog.length()}"
+                    }
+                }
+            }
+        }
+    }
+}
