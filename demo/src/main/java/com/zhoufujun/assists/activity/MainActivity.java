@@ -61,6 +61,12 @@ public class MainActivity extends AppCompatActivity implements AssistsServiceLis
 //        AssistsServiceListener.super.screenCaptureEnable();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkServiceEnable();
+    }
+
     private void checkServiceEnable() {
         if (AssistsCore.INSTANCE.isAccessibilityServiceEnabled()) {
             Toast.makeText(this, "服务已经开启，在悬浮窗中使用", Toast.LENGTH_SHORT).show();

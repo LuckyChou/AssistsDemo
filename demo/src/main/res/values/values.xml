@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">123</string>
+    <string name="assists_description">这是我的例说明项，在字符串资源中定义assists_description可进行覆盖</string>
 </resources>

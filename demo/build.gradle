@@ -78,4 +78,7 @@ dependencies {
 //    implementation "com.github.bumptech.glide:glide:${rootProject.ext.glideVersion}"
 //    annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glideVersion}"
 //    implementation "com.google.android.flexbox:flexbox:${rootProject.ext.flexboxVersion}"
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }

@@ -49,7 +49,8 @@ object OverlayBool : AssistsServiceListener {
                     btnGen.setOnClickListener {
                         StepManager.execute(W::class.java, 2, begin = true)
                     }
-                    btnSubmit.setOnClickListener {}
+                    btnSubmit.setOnClickListener {
+                        StepManager.execute(W::class.java, 3, begin = true)}
                 }
             }
             return field
@@ -75,8 +76,8 @@ object OverlayBool : AssistsServiceListener {
                     field = AssistsWindowWrapper(
                         it.root,
                         wmLayoutParams = AssistsWindowManager.createLayoutParams().apply {
-                            width = (ScreenUtils.getScreenWidth() * 0.8).toInt()
-                            height = (ScreenUtils.getScreenHeight() * 0.5).toInt()
+                            width = (ScreenUtils.getScreenWidth() * 0.6).toInt()
+                            height = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         },
                         onClose = {
                             hide()
@@ -85,7 +86,7 @@ object OverlayBool : AssistsServiceListener {
                         minWidth = (ScreenUtils.getScreenWidth() * 0.6).toInt()
                         minHeight = (ScreenUtils.getScreenHeight() * 0.4).toInt()
                         initialCenter = true
-                        viewBinding.tvTitle.text = "日志"
+                        viewBinding.tvTitle.text = "运行记录"
                     }
                 }
             }
