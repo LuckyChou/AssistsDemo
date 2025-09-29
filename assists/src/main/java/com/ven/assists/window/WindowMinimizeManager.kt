@@ -102,25 +102,27 @@ object WindowMinimizeManager : AssistsServiceListener {
                 return true
             }
             if (event.action == MotionEvent.ACTION_MOVE) {
-                wmlp?.x = event.rawX.toInt()
+                if(TimeUtils.getNowMills() - downTime >= 250) {
+                    wmlp?.x = event.rawX.toInt()
 
-                wmlp?.y = event.rawY.toInt() - BarUtils.getStatusBarHeight()
-                wmlp?.let {
-                    if (it.x < -((viewBinding?.root?.measuredWidth ?: 0) / 2)) {
-                        it.x = -((viewBinding?.root?.measuredWidth ?: 0) / 2)
+                    wmlp?.y = event.rawY.toInt() - BarUtils.getStatusBarHeight()
+                    wmlp?.let {
+                        if (it.x < -((viewBinding?.root?.measuredWidth ?: 0) / 2)) {
+                            it.x = -((viewBinding?.root?.measuredWidth ?: 0) / 2)
+                        }
+                        if (it.x >= ScreenUtils.getScreenWidth() - (viewBinding?.root?.measuredWidth ?: 0) / 2) {
+                            it.x = ScreenUtils.getScreenWidth() - (viewBinding?.root?.measuredWidth ?: 0) / 2
+                        }
+                        if (it.y < -((viewBinding?.root?.measuredHeight ?: 0) / 2)) {
+                            it.y = -((viewBinding?.root?.measuredHeight ?: 0) / 2)
+                        }
+                        if (it.y >= ScreenUtils.getScreenHeight() - (viewBinding?.root?.measuredHeight ?: 0) / 2) {
+                            it.y = ScreenUtils.getScreenHeight() - (viewBinding?.root?.measuredHeight ?: 0) / 2
+                        }
                     }
-                    if (it.x >= ScreenUtils.getScreenWidth() - (viewBinding?.root?.measuredWidth ?: 0) / 2) {
-                        it.x = ScreenUtils.getScreenWidth() - (viewBinding?.root?.measuredWidth ?: 0) / 2
-                    }
-                    if (it.y < -((viewBinding?.root?.measuredHeight ?: 0) / 2)) {
-                        it.y = -((viewBinding?.root?.measuredHeight ?: 0) / 2)
-                    }
-                    if (it.y >= ScreenUtils.getScreenHeight() - (viewBinding?.root?.measuredHeight ?: 0) / 2) {
-                        it.y = ScreenUtils.getScreenHeight() - (viewBinding?.root?.measuredHeight ?: 0) / 2
-                    }
+                    CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(viewBinding?.root, wmlp) }
+                    return true
                 }
-                CoroutineWrapper.launch { AssistsWindowManager.updateViewLayout(viewBinding?.root, wmlp) }
-                return true
             }
             if (event.action == MotionEvent.ACTION_UP) {
                 if (TimeUtils.getNowMills() - downTime < 250) {
