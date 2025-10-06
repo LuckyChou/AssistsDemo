@@ -102,7 +102,7 @@ object WindowMinimizeManager : AssistsServiceListener {
                 return true
             }
             if (event.action == MotionEvent.ACTION_MOVE) {
-                if(TimeUtils.getNowMills() - downTime >= 250) {
+                if(TimeUtils.getNowMills() - downTime >= 100) {
                     wmlp?.x = event.rawX.toInt()
 
                     wmlp?.y = event.rawY.toInt() - BarUtils.getStatusBarHeight()

@@ -1,5 +1,7 @@
 package com.zhoufujun.assists.activity;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import com.ven.assists.service.AssistsService;
 import com.ven.assists.service.AssistsServiceListener;
 import com.zhoufujun.assists.B;
 import com.zhoufujun.assists.R;
+import com.zhoufujun.assists.broadcast.LockScreenReceiver;
 
 public class MainActivity extends AppCompatActivity implements AssistsServiceListener {
 
@@ -25,6 +28,12 @@ public class MainActivity extends AppCompatActivity implements AssistsServiceLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         AssistsService.Companion.getListeners().add(this);
+        LockScreenReceiver lockScreenReceiver = new LockScreenReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(lockScreenReceiver, intentFilter);
         checkServiceEnable();
     }
 
