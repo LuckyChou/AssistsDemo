@@ -25,18 +25,45 @@ class W : StepImpl() {
             run outside@{
                 findById.forEach {
                     run inner@{
-                        it.findById("com.tencent.mm:id/cut").forEach { it ->
-                            val boundsInScreen = it.getBoundsInScreen()
-                            if (boundsInScreen.bottom < 0) {
-                                LogWrapper.logAppend("超出屏幕范围，跳过")
-                                return@inner
-                            } else {
-                                LogWrapper.logAppend("获取到数据：${it.text}")
-                                LogWrapper.logAppend("开始生成回复")
-                                MyApplication.getInstance().setAiAnswer(AiUtil.getAiAnswer(it.text.toString()))
-                                LogWrapper.logAppend("回复")
-                                LogWrapper.logAppend("准备回复（按确定执行回复） : " + MyApplication.getInstance().getAiAnswer())
-                                return@outside
+                        val cut = it.findById("com.tencent.mm:id/cut")
+                        if(cut.isNotEmpty()) {
+                            cut.forEach { it ->
+                                val boundsInScreen = it.getBoundsInScreen()
+                                if (boundsInScreen.bottom < 0) {
+                                    LogWrapper.logAppend("超出屏幕范围，跳过")
+                                    return@inner
+                                } else {
+                                    LogWrapper.logAppend("获取到数据：${it.text}")
+                                    LogWrapper.logAppend("开始生成回复")
+                                    MyApplication.getInstance().setAiAnswer(AiUtil.getAiAnswer(it.text.toString()))
+                                    LogWrapper.logAppend("回复")
+                                    LogWrapper.logAppend("准备回复（按确定执行回复） : " + MyApplication.getInstance().getAiAnswer())
+                                    return@outside
+                                }
+                            }
+                        }else{
+                            val cuu = it.findById("com.tencent.mm:id/cuu")
+                            if(cuu.isNotEmpty()){
+                                delay(500)
+                                runMain { OverlayBool.hide() }
+                                delay(1000)
+                                AssistsCore.gestureClick(
+                                    cuu[0].getBoundsInScreen().centerX().toFloat(),
+                                    cuu[0].getBoundsInScreen().centerY().toFloat(),
+                                    20
+                                )
+                                delay(500)
+                                runMain { OverlayBool.show() }
+                                delay(1000)
+                                val nbx = AssistsCore.findById("com.tencent.mm:id/nbx")
+                                nbx.forEach {
+                                    LogWrapper.logAppend("获取到数据：${it.text}")
+                                    LogWrapper.logAppend("开始生成回复")
+                                    MyApplication.getInstance().setAiAnswer(AiUtil.getAiAnswer(it.text.toString()))
+                                    LogWrapper.logAppend("回复")
+                                    LogWrapper.logAppend("准备回复（按确定执行回复） : " + MyApplication.getInstance().getAiAnswer())
+                                    AssistsCore.back()
+                                }
                             }
                         }
                     }
@@ -50,7 +77,11 @@ class W : StepImpl() {
                     run outside@{
                         findById("com.tencent.mm:id/n9a").forEach { outSideIt ->
                             run inner@{
-                                outSideIt.findById("com.tencent.mm:id/cut").forEach { it ->
+                                var cut = outSideIt.findById("com.tencent.mm:id/cut")
+                                if(cut.isEmpty()){
+                                    cut = outSideIt.findById("com.tencent.mm:id/cuu")
+                                }
+                                cut.forEach { it ->
                                     val boundsInScreen = it.getBoundsInScreen()
                                     if (boundsInScreen.bottom < 0) {
                                         return@inner

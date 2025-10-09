@@ -1,5 +1,6 @@
 package com.zhoufujun.assists.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -79,9 +80,13 @@ public class MainActivity extends AppCompatActivity implements AssistsServiceLis
     private void checkServiceEnable() {
         if (AssistsCore.INSTANCE.isAccessibilityServiceEnabled()) {
             Toast.makeText(this, "服务已经开启，在悬浮窗中使用", Toast.LENGTH_SHORT).show();
-            AssistsCore.INSTANCE.home();
+            Intent intent = new Intent();
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ComponentName component = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+            intent.setComponent(component);
+            startActivity(intent);
             B.INSTANCE.gotoStep1();
-//            startActivity(getPackageManager().getLaunchIntentForPackage(AppUtils.getAppPackageName()));
         } else {
             AssistsCore.INSTANCE.openAccessibilitySetting();
         }
