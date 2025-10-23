@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">123</string>
-    <string name="assists_description">这是我的例说明项，在字符串资源中定义assists_description可进行覆盖</string>
+
+    <string name="app_name">私域运营</string>
+    <string name="assists_description">无障碍权限是私域运营APP的必备权限，是APP能正常运行的基础，如您拒绝授权将无法使用本软件。</string>
+
+    <!-- GuideActivity -->
+    <string name="enable_background_popup">开启后台弹窗权限</string>
+    <string name="enable_accessible">授予权限</string>
+
+    <!-- MainActivity -->
+    <string name="start_script">启动脚本</string>
 </resources>

@@ -2,12 +2,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <Button
-        android:id="@+id/start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/enable_background_popup"
         android:layout_marginTop="100dp"
         android:layout_gravity="center"
-        android:text="@string/start_script" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_background_popup"/>
+    <Button
+        android:id="@+id/enable_accessible"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_accessible"/>
 </LinearLayout>
